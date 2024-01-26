@@ -4,7 +4,7 @@ int in1 = 2; // 2
 int in2 = 3; // 3
 
 // motor two
-int enB = 9; // 9
+int enB = 7; // 9
 int in3 = 4; // 4
 int in4 = 5; // 5
 
@@ -19,31 +19,21 @@ void setup ()
   pinMode(in4, OUTPUT);
 }
 
-void moveClockwise()
+void moveForward()
 {
-  digitalWrite(in2, LOW);
+  digitalWrite(in1, LOW);
+  digitalWrite(in2, HIGH);
   analogWrite(enA, 255);
-  digitalWrite(in3, HIGH);
-  digitalWrite(in4, LOW);
+  digitalWrite(in3, LOW);
+  digitalWrite(in4, HIGH);
   analogWrite(enB, 255);
 
 }
 
-void moveCounterClockwise()
-{
-  digitalWrite(in1, LOW);
-  digitalWrite(in2, HIGH);
-  analogWrite(enA, 125);
-  digitalWrite(in3, LOW);
-  digitalWrite(in4, HIGH);
-  analogWrite(enB, 125);
 
-}
 
 void loop()
 {
-  moveClockwise();
-  delay(2000);
-  moveCounterClockwise();
+  moveForward();
   delay(2000);
 }
