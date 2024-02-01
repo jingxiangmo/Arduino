@@ -39,14 +39,18 @@ void setup() {
     Serial.println("Go to www.billporter.info for updates and to report bugs.");
   }
 
-  else if (error == 1)
-    Serial.println("No controller found, check wiring, see readme.txt to enable debug. visit www.billporter.info for troubleshooting tips");
+  else if (error == 1) {
+      Serial.println("ERROR: No controller found");
+      Serial.println("you must always either restart your Arduino after you connect the controller, or call config_gamepad(pins) again after connecting the controller.")
+  }
 
-  else if (error == 2)
-    Serial.println("Controller found but not accepting commands. see readme.txt to enable debug. Visit www.billporter.info for troubleshooting tips");
+  else if (error == 2){
+      Serial.println("ERROR: Controller found but not accepting commands.");
+  }
 
-  else if (error == 3)
-    Serial.println("Controller refusing to enter Pressures mode, may not support it. ");
+  else if (error == 3){
+    Serial.println("ERROR: Controller refusing to enter Pressures mode, may not support it. ");
+  }
 
   type = ps2x.readType();
   switch (type) {
@@ -97,10 +101,11 @@ void moveForward() {
 }
 
 void ps2Controller(){
-  if(error == 1) 
-  return; 
+  if(error == 1){
+    return; 
+  }
   
- if(type == 2){ 
+ if(type == 2){
    
    ps2x.read_gamepad();          //read controller 
    

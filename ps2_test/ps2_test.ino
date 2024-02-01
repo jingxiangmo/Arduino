@@ -166,7 +166,6 @@ void loop(){
         Serial.println(ps2x.Analog(PSS_RX), DEC); 
     } 
     
-    
  }
  
  
