@@ -41,7 +41,7 @@ void setup() {
 
   else if (error == 1) {
       Serial.println("ERROR: No controller found");
-      Serial.println("you must always either restart your Arduino after you connect the controller, or call config_gamepad(pins) again after connecting the controller.")
+      Serial.println("you must always either restart your Arduino after you connect the controller, or call config_gamepad(pins) again after connecting the controller.");
   }
 
   else if (error == 2){
@@ -100,6 +100,72 @@ void moveForward() {
   analogWrite(enD, 255);
 }
 
+void moveBackward() {
+  digitalWrite(in1, HIGH);
+  digitalWrite(in2, LOW);
+  analogWrite(enA, 255);
+  digitalWrite(in3, HIGH);
+  digitalWrite(in4, LOW);
+  analogWrite(enB, 255);
+
+  digitalWrite(in5, HIGH);
+  digitalWrite(in6, LOW);
+  analogWrite(enC, 255);
+  digitalWrite(in7, HIGH);
+  digitalWrite(in8, LOW);
+  analogWrite(enD, 255);
+}
+
+void moveStop(){
+
+  analogWrite(enA, 0);
+  analogWrite(enB, 0);
+  analogWrite(enC, 0);
+  analogWrite(enD, 0);
+}
+
+void turnLeft() {
+  // Slow down or reverse left motors
+  digitalWrite(in1, HIGH); // Reverse direction or LOW to slow down
+  digitalWrite(in2, LOW);  // Reverse direction or HIGH to slow down
+  analogWrite(enA, 128);   // Adjust speed as necessary
+
+  digitalWrite(in5, HIGH); // Reverse direction or LOW to slow down
+  digitalWrite(in6, LOW);  // Reverse direction or HIGH to slow down
+  analogWrite(enC, 128);   // Adjust speed as necessary
+
+  // Keep right motors moving forward
+  digitalWrite(in3, LOW);
+  digitalWrite(in4, HIGH);
+  analogWrite(enB, 255);
+
+  digitalWrite(in7, LOW);
+  digitalWrite(in8, HIGH);
+  analogWrite(enD, 255);
+}
+
+
+void turnRight() {
+  // Slow down or reverse right motors
+  digitalWrite(in3, HIGH); // Reverse direction or LOW to slow down
+  digitalWrite(in4, LOW);  // Reverse direction or HIGH to slow down
+  analogWrite(enB, 128);   // Adjust speed as necessary
+
+  digitalWrite(in7, HIGH); // Reverse direction or LOW to slow down
+  digitalWrite(in8, LOW);  // Reverse direction or HIGH to slow down
+  analogWrite(enD, 128);   // Adjust speed as necessary
+
+  // Keep left motors moving forward
+  digitalWrite(in1, LOW);
+  digitalWrite(in2, HIGH);
+  analogWrite(enA, 255);
+
+  digitalWrite(in5, LOW);
+  digitalWrite(in6, HIGH);
+  analogWrite(enC, 255);
+}
+
+
 void ps2Controller(){
   if(error == 1){
     return; 
@@ -134,7 +200,6 @@ void ps2Controller(){
          Serial.println("Start is being held");
     if(ps2x.Button(PSB_SELECT))
          Serial.println("Select is being held");
-
     
     if(ps2x.Button(ORANGE_FRET)) // print stick value IF TRUE
     {
@@ -146,79 +211,31 @@ void ps2Controller(){
  else { //DualShock Controller
   
     ps2x.read_gamepad(false, vibrate);          //read controller and set large motor to spin at 'vibrate' speed
-    
-    if(ps2x.Button(PSB_START))                   //will be TRUE as long as button is pressed
-         Serial.println("Start is being held");
-    if(ps2x.Button(PSB_SELECT))
-         Serial.println("Select is being held");
-         
-         
-     if(ps2x.Button(PSB_PAD_UP)) {         //will be TRUE as long as button is pressed
-       Serial.print("Up held this hard: ");
-       Serial.println(ps2x.Analog(PSAB_PAD_UP), DEC);
-      }
-      if(ps2x.Button(PSB_PAD_RIGHT)){
-       Serial.print("Right held this hard: ");
-        Serial.println(ps2x.Analog(PSAB_PAD_RIGHT), DEC);
-      }
-      if(ps2x.Button(PSB_PAD_LEFT)){
-       Serial.print("LEFT held this hard: ");
-        Serial.println(ps2x.Analog(PSAB_PAD_LEFT), DEC);
-      }
-      if(ps2x.Button(PSB_PAD_DOWN)){
-       Serial.print("DOWN held this hard: ");
-     Serial.println(ps2x.Analog(PSAB_PAD_DOWN), DEC);
-      }   
-  
-    
-      vibrate = ps2x.Analog(PSAB_BLUE);        //this will set the large motor vibrate speed based on 
-                                              //how hard you press the blue (X) button    
-    
-    if (ps2x.NewButtonState())               //will be TRUE if any button changes state (on to off, or off to on)
-    {   
-        if(ps2x.Button(PSB_L3))
-         Serial.println("L3 pressed");
-        if(ps2x.Button(PSB_R3))
-         Serial.println("R3 pressed");
-        if(ps2x.Button(PSB_L2))
-         Serial.println("L2 pressed");
-        if(ps2x.Button(PSB_R2))
-         Serial.println("R2 pressed");
-        if(ps2x.Button(PSB_GREEN))
-         Serial.println("Triangle pressed");
-         
-    }   
-         
-    
-    if(ps2x.ButtonPressed(PSB_RED))             //will be TRUE if button was JUST pressed
-         Serial.println("Circle just pressed");
-         
-    if(ps2x.ButtonReleased(PSB_PINK))             //will be TRUE if button was JUST released
-         Serial.println("Square just released");     
-    
-    if(ps2x.NewButtonState(PSB_BLUE))            //will be TRUE if button was JUST pressed OR released
-         Serial.println("X just changed");    
-    
-    
-    if(ps2x.Button(PSB_L1) || ps2x.Button(PSB_R1)) // print stick values if either is TRUE
-    {
-        Serial.print("Stick Values:");
-        Serial.print(ps2x.Analog(PSS_LY), DEC); //Left stick, Y axis. Other options: LX, RY, RX  
-        Serial.print(",");
-        Serial.print(ps2x.Analog(PSS_LX), DEC); 
-        Serial.print(",");
-        Serial.print(ps2x.Analog(PSS_RY), DEC); 
-        Serial.print(",");
-        Serial.println(ps2x.Analog(PSS_RX), DEC); 
-    } 
-    
+
+    if(ps2x.ButtonPressed(PSB_GREEN)){
+      Serial.println("Triangle just pressed. MOVE FORWARD.");  
+      moveForward();
+    } else if(ps2x.ButtonPressed(PSB_BLUE)){
+      Serial.println("X just pressed. MOVE BACKWARD.");   
+      moveBackward();
+    } else if(ps2x.ButtonPressed(PSB_PINK)){
+      Serial.println("Square just pressed. MOVE LEFT.");   
+      turnLeft();
+    } else if(ps2x.ButtonPressed(PSB_RED)) {
+      Serial.println("Circle just pressed. MOVE RIGHT.");
+      turnRight();
+    } else if (ps2x.ButtonPressed(PSB_START)){
+      Serial.println("Circle just pressed. MOVE RIGHT.");
+      moveStop();
+    }
+
  }
- 
+
 }
 
 void loop() {
   // Serial.print("test");
 
   ps2Controller();
-  // moveForward();
+  delay(50);
 }
